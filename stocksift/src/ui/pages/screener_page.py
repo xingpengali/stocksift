@@ -105,7 +105,7 @@ class ScreenerPage(BasePage):
         self._filter_panel = FilterPanel()
         self._filter_panel.filter_requested.connect(self._on_filter)
         self._filter_panel.setMaximumWidth(380)
-        main_layout.addWidget(self._filter_panel)
+        main_layout.addWidget(self._filter_panel, 1)
         
         # 右侧结果区域
         right_container = QWidget()
@@ -152,10 +152,13 @@ class ScreenerPage(BasePage):
             {'text': '⭐ 加入自选', 'callback': self._on_add_watchlist, 'id': 'watchlist'},
         ])
         
+        # 让表格占据所有可用空间
         right_layout.addWidget(self._result_table, 1)
         
         main_layout.addWidget(right_container, 2)
-        content_layout.addLayout(main_layout)
+        
+        # 让主布局占据所有可用垂直空间
+        content_layout.addLayout(main_layout, 1)
     
     def _on_filter(self):
         """执行筛选"""

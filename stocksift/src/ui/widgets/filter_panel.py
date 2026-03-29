@@ -212,13 +212,13 @@ class FilterPanel(QGroupBox):
                 background-color: white;
                 border: 1px solid #e8e8e8;
                 border-radius: 12px;
-                margin-top: 16px;
+                margin-top: 24px;
                 padding-top: 16px;
                 font-weight: 600;
             }
             QGroupBox::title {
                 subcontrol-origin: margin;
-                left: 16px;
+                left: 8px;
                 padding: 0 8px;
                 color: #262626;
                 font-size: 14px;

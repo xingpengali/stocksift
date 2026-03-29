@@ -222,20 +222,8 @@ class MainWindow(QMainWindow):
     
     def _init_toolbar(self):
         """初始化工具栏"""
-        toolbar = QToolBar()
-        self.addToolBar(toolbar)
-        
-        # 刷新按钮
-        refresh_action = QAction("🔄 刷新", self)
-        refresh_action.triggered.connect(self._refresh_current_page)
-        toolbar.addAction(refresh_action)
-        
-        toolbar.addSeparator()
-        
-        # 主题切换按钮
-        theme_action = QAction("🌓 主题", self)
-        theme_action.triggered.connect(self._toggle_theme)
-        toolbar.addAction(theme_action)
+        # 工具栏已移除，功能可通过菜单栏访问
+        pass
     
     def _init_statusbar(self):
         """初始化状态栏"""

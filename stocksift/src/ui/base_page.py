@@ -72,10 +72,7 @@ class BasePage(QWidget):
         self._content_widget = QWidget()
         self._content_layout = QVBoxLayout(self._content_widget)
         self._content_layout.setContentsMargins(0, 0, 0, 0)
-        self._layout.addWidget(self._content_widget)
-        
-        # 弹性空间
-        self._layout.addStretch()
+        self._layout.addWidget(self._content_widget, 1)
     
     # ========== 生命周期方法 ==========
     
