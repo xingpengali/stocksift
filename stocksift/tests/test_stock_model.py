@@ -3,9 +3,14 @@
 股票模型测试
 """
 import os
+import sys
 import tempfile
 import unittest
 from datetime import datetime, date
+from pathlib import Path
+
+# 添加 src 到路径
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
 from models.database import get_db_manager, reset_db_manager
 from models.stock import Stock, StockRepository

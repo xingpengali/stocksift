@@ -2,8 +2,13 @@
 """
 数据源适配器基类测试
 """
+import sys
 import unittest
 from datetime import date
+from pathlib import Path
+
+# 添加 src 到路径
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
 from datasource.base_adapter import (
     BaseDataAdapter, AdapterFactory,
