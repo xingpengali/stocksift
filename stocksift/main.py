@@ -5,10 +5,19 @@ StockSift - A股选股助手
 主入口文件
 """
 import sys
+import os
 from pathlib import Path
 
+# 获取应用根目录（支持打包后的路径）
+if getattr(sys, 'frozen', False):
+    # 打包后的路径
+    application_path = Path(sys._MEIPASS)
+else:
+    # 开发环境路径
+    application_path = Path(__file__).parent
+
 # 添加src目录到路径
-sys.path.insert(0, str(Path(__file__).parent / 'src'))
+sys.path.insert(0, str(application_path / 'src'))
 
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import Qt
