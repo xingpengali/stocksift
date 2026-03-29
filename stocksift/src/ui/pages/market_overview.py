@@ -9,10 +9,16 @@ from PyQt6.QtWidgets import (
     QGridLayout, QGroupBox, QTableWidget, QTableWidgetItem,
     QHeaderView, QPushButton
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
 
 from ui.base_page import BasePage
 from utils.logger import get_logger
+from models.market_overview import (
+    get_latest_market_indices, 
+    get_latest_sectors, 
+    get_latest_market_stats,
+    get_latest_capital_flow
+)
 
 logger = get_logger(__name__)
 
@@ -232,16 +238,15 @@ class MarketOverviewPage(BasePage):
         self._load_data()
     
     def _load_data(self):
-        """加载市场数据"""
+        """加载市场数据（从数据库）"""
         self.show_loading(True)
         
         try:
-            # TODO: 从数据源获取真实数据
-            # 模拟数据
-            self._update_index_data()
-            self._update_sector_data()
-            self._update_stats_data()
-            self._update_flow_data()
+            # 从数据库获取数据
+            self._update_index_data_from_db()
+            self._update_sector_data_from_db()
+            self._update_stats_data_from_db()
+            self._update_flow_data_from_db()
             
         except Exception as e:
             logger.error(f"加载市场数据失败: {e}")
@@ -249,74 +254,131 @@ class MarketOverviewPage(BasePage):
         finally:
             self.show_loading(False)
     
-    def _update_index_data(self):
-        """更新指数数据（模拟）"""
-        import random
-        
-        mock_data = {
-            "上证指数": (3250.50, 15.30, 0.47),
-            "深证成指": (10580.20, -25.60, -0.24),
-            "创业板指": (2150.80, 8.90, 0.41),
-            "科创50": (980.30, -5.20, -0.53),
-        }
-        
-        for name, (value, change, change_pct) in mock_data.items():
-            if name in self._index_cards:
-                self._index_cards[name].set_data(value, change, change_pct)
-    
-    def _update_sector_data(self):
-        """更新板块数据（模拟）"""
-        sectors = [
-            ("半导体", 3.52, "中芯国际"),
-            ("新能源", 2.18, "宁德时代"),
-            ("医药", 1.85, "恒瑞医药"),
-            ("白酒", -1.25, "贵州茅台"),
-            ("银行", -0.86, "招商银行"),
-        ]
-        
-        self._sector_table.setRowCount(len(sectors))
-        for i, (name, change, leader) in enumerate(sectors):
-            self._sector_table.setItem(i, 0, QTableWidgetItem(name))
+    def _update_index_data_from_db(self):
+        """从数据库更新指数数据"""
+        try:
+            indices = get_latest_market_indices()
             
-            change_item = QTableWidgetItem(f"{change:+.2f}")
-            if change > 0:
-                change_item.setForeground(Qt.GlobalColor.red)
-            else:
-                change_item.setForeground(Qt.GlobalColor.darkGreen)
-            self._sector_table.setItem(i, 1, change_item)
+            if not indices:
+                logger.warning("数据库中没有指数数据")
+                return
             
-            self._sector_table.setItem(i, 2, QTableWidgetItem(leader))
+            # 指数名称映射
+            name_mapping = {
+                "上证指数": "上证指数",
+                "深证成指": "深证成指",
+                "创业板指": "创业板指",
+                "科创50": "科创50",
+            }
+            
+            for index_data in indices:
+                name = name_mapping.get(index_data.get('name'), index_data.get('name'))
+                if name in self._index_cards:
+                    self._index_cards[name].set_data(
+                        value=index_data.get('value', 0),
+                        change=index_data.get('change', 0),
+                        change_pct=index_data.get('change_pct', 0)
+                    )
+                    
+        except Exception as e:
+            logger.error(f"从数据库更新指数数据失败: {e}")
     
-    def _update_stats_data(self):
-        """更新涨跌统计（模拟）"""
-        stats = {
-            "涨停": 45,
-            "涨5%以上": 120,
-            "涨0-5%": 1800,
-            "平盘": 150,
-            "跌0-5%": 2100,
-            "跌5%以上": 85,
-            "跌停": 12,
-        }
-        
-        text = "  |  ".join([f"{k}: {v}" for k, v in stats.items()])
-        self._stats_label.setText(text)
-    
-    def _update_flow_data(self):
-        """更新资金流向（模拟）"""
-        flows = {
-            "主力净流入": "+58.3亿",
-            "散户净流入": "-32.1亿",
-            "北向资金": "+25.6亿",
-        }
-        
-        for name, value in flows.items():
-            if name in self._flow_labels:
-                label = self._flow_labels[name]
-                label.setText(value)
+    def _update_sector_data_from_db(self):
+        """从数据库更新板块数据"""
+        try:
+            sectors = get_latest_sectors(limit=10)
+            
+            if not sectors:
+                logger.warning("数据库中没有板块数据")
+                return
+            
+            self._sector_table.setRowCount(len(sectors))
+            
+            for i, sector in enumerate(sectors):
+                name = sector.get('name', '')
+                change = sector.get('change_pct', 0)
+                leader = sector.get('leader_name', '-')
                 
-                # 设置颜色
-                if value.startswith("+"):
-                    label.setStyleSheet("font-size: 18px; font-weight: bold; color: #cf1322;")
-                elif value.startswith("-"):
-                    label.setStyleSheet("font-size: 18px; font-weight: bold; color: #3f8600;")
+                self._sector_table.setItem(i, 0, QTableWidgetItem(name))
+                
+                change_item = QTableWidgetItem(f"{change:+.2f}")
+                if change > 0:
+                    change_item.setForeground(Qt.GlobalColor.red)
+                else:
+                    change_item.setForeground(Qt.GlobalColor.darkGreen)
+                self._sector_table.setItem(i, 1, change_item)
+                
+                self._sector_table.setItem(i, 2, QTableWidgetItem(leader))
+                
+        except Exception as e:
+            logger.error(f"从数据库更新板块数据失败: {e}")
+    
+    def _update_stats_data_from_db(self):
+        """从数据库更新涨跌统计"""
+        try:
+            stats = get_latest_market_stats()
+            
+            if not stats:
+                logger.warning("数据库中没有统计数据")
+                return
+            
+            stats_text = {
+                "涨停": stats.get('limit_up', 0),
+                "涨5%以上": stats.get('up_over_5', 0),
+                "涨0-5%": stats.get('up_0_to_5', 0),
+                "平盘": stats.get('flat', 0),
+                "跌0-5%": stats.get('down_0_to_5', 0),
+                "跌5%以上": stats.get('down_over_5', 0),
+                "跌停": stats.get('limit_down', 0),
+            }
+            
+            text = "  |  ".join([f"{k}: {v}" for k, v in stats_text.items()])
+            self._stats_label.setText(text)
+            
+        except Exception as e:
+            logger.error(f"从数据库更新统计数据失败: {e}")
+    
+    def _update_flow_data_from_db(self):
+        """从数据库更新资金流向"""
+        try:
+            flow = get_latest_capital_flow()
+            
+            if not flow:
+                logger.warning("数据库中没有资金流向数据")
+                return
+            
+            flows = {
+                "主力净流入": self._format_amount(flow.get('main_inflow', 0)),
+                "散户净流入": self._format_amount(flow.get('retail_inflow', 0)),
+                "北向资金": self._format_amount(flow.get('north_inflow', 0)),
+            }
+            
+            for name, value in flows.items():
+                if name in self._flow_labels:
+                    label = self._flow_labels[name]
+                    label.setText(value)
+                    
+                    # 设置颜色
+                    if value.startswith("+"):
+                        label.setStyleSheet("font-size: 18px; font-weight: bold; color: #cf1322;")
+                    elif value.startswith("-"):
+                        label.setStyleSheet("font-size: 18px; font-weight: bold; color: #3f8600;")
+                    else:
+                        label.setStyleSheet("font-size: 18px; font-weight: bold; color: #595959;")
+                        
+        except Exception as e:
+            logger.error(f"从数据库更新资金流向失败: {e}")
+    
+    def _format_amount(self, amount):
+        """格式化金额显示"""
+        if amount is None:
+            return "--"
+        
+        amount = float(amount)
+        
+        if amount >= 100000000:
+            return f"+{amount/100000000:.1f}亿" if amount > 0 else f"{amount/100000000:.1f}亿"
+        elif amount >= 10000:
+            return f"+{amount/10000:.1f}万" if amount > 0 else f"{amount/10000:.1f}万"
+        else:
+            return f"+{amount:.0f}" if amount > 0 else f"{amount:.0f}"

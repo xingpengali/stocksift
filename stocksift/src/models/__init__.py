@@ -11,6 +11,7 @@ from .valuation import Valuation, ValuationRepository
 from .alert import AlertRule, AlertRecord, AlertRuleRepository, AlertRecordRepository
 from .strategy import Strategy, BacktestRecord, StrategyRepository, BacktestRecordRepository
 from .watchlist import WatchlistGroup, WatchlistStock, WatchlistGroupRepository, WatchlistStockRepository
+from .market_overview import MarketIndex, Sector, MarketStats, CapitalFlow
 
 __all__ = [
     'DatabaseManager', 'get_db_manager', 'Base', 'session_scope',
@@ -22,4 +23,5 @@ __all__ = [
     'AlertRule', 'AlertRecord', 'AlertRuleRepository', 'AlertRecordRepository',
     'Strategy', 'BacktestRecord', 'StrategyRepository', 'BacktestRecordRepository',
     'WatchlistGroup', 'WatchlistStock', 'WatchlistGroupRepository', 'WatchlistStockRepository',
+    'MarketIndex', 'Sector', 'MarketStats', 'CapitalFlow',
 ]

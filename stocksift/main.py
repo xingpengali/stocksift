@@ -26,6 +26,7 @@ from ui.dialogs import SettingsDialog
 from config.settings import get_settings
 from models.database import get_db_manager
 from utils.logger import setup_logging, get_logger
+from core.market_data_sync import start_market_data_sync, stop_market_data_sync
 
 
 def init_application():
@@ -43,6 +44,10 @@ def init_application():
     db = get_db_manager()
     db.init_db()
     logger.info("数据库初始化完成")
+    
+    # 启动市场数据同步服务
+    start_market_data_sync()
+    logger.info("市场数据同步服务已启动")
     
     return logger
 
@@ -92,7 +97,12 @@ def main():
     logger.info("应用启动完成")
     
     # 运行应用
-    sys.exit(app.exec())
+    try:
+        sys.exit(app.exec())
+    finally:
+        # 应用退出时停止同步服务
+        stop_market_data_sync()
+        logger.info("应用已退出")
 
 
 if __name__ == "__main__":

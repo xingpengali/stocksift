@@ -86,7 +86,7 @@ class DatabaseManager:
         """
         try:
             # 导入所有模型以确保表被创建
-            from . import stock, quote, kline, financial
+            from . import stock, quote, kline, financial, market_overview
             
             Base.metadata.create_all(self._engine)
             logger.info("数据库表创建完成")
