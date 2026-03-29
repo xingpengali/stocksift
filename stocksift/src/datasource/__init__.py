@@ -21,6 +21,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from .akshare_adapter import AkshareAdapter
+    AdapterFactory.register('akshare', AkshareAdapter)
+except ImportError:
+    pass
+
 __all__ = [
     'BaseDataAdapter',
     'AdapterFactory',
