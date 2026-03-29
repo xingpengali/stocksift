@@ -54,7 +54,8 @@ class DatabaseManager:
     def _get_default_db_path(self) -> str:
         """获取默认数据库路径"""
         settings = get_settings()
-        project_root = Path(__file__).parent.parent
+        # 从 models/database.py 向上两级到 src，再向上到项目根目录
+        project_root = Path(__file__).parent.parent.parent
         db_dir = project_root / "data" / "db"
         db_dir.mkdir(parents=True, exist_ok=True)
         return str(db_dir / DEFAULT_DB_NAME)

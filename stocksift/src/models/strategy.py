@@ -25,7 +25,7 @@ class Strategy(Base):
     """
     __tablename__ = 'strategies'
     
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String(20), primary_key=True, comment='策略ID')
     name = Column(String(100), nullable=False, comment='策略名称')
     description = Column(Text, comment='策略描述')
     

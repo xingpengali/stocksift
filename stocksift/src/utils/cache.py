@@ -9,6 +9,7 @@ import threading
 from typing import Any, Optional, Dict, List, Callable
 from collections import OrderedDict
 from dataclasses import dataclass, field
+from functools import wraps
 
 from utils.logger import get_logger
 
@@ -358,6 +359,3 @@ def cached(cache_name: str = "default", ttl: Optional[int] = None,
         
         return wrapper
     return decorator
-
-
-from functools import wraps

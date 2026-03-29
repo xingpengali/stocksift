@@ -61,7 +61,8 @@ def setup_logging(
     """
     # 确定日志目录
     if log_dir is None:
-        project_root = Path(__file__).parent.parent
+        # 从 utils/logger.py 向上两级到 src，再向上到项目根目录
+        project_root = Path(__file__).parent.parent.parent
         log_dir = project_root / LOG_DIR
     else:
         log_dir = Path(log_dir)

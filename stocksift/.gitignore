@@ -35,14 +35,7 @@ ENV/
 .DS_Store
 
 # Project specific
-data/cache/*
-!data/cache/.gitkeep
-data/db/*
-!data/db/.gitkeep
-data/logs/*
-!data/logs/.gitkeep
-data/config.json
-data/config.json.backup.*
+data/
 
 # Testing
 .pytest_cache/
@@ -59,3 +52,6 @@ htmlcov/
 # Local development
 .env
 .env.local
+
+reviews/
+docs/

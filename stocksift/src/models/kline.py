@@ -197,6 +197,27 @@ class KlineRepository:
             if not self._use_external_session:
                 session.close()
     
+    def get_by_code_and_date_range(
+        self,
+        code: str,
+        start_date: date,
+        end_date: date,
+        period: str = 'daily'
+    ) -> List[Kline]:
+        """
+        根据日期范围获取K线数据
+        
+        Args:
+            code: 股票代码
+            start_date: 开始日期
+            end_date: 结束日期
+            period: 周期
+            
+        Returns:
+            K线数据列表
+        """
+        return self.get_by_code(code, period, start_date, end_date)
+    
     def get_date_range(self, code: str, period: str = 'daily') -> tuple:
         """获取K线日期范围"""
         session = self._get_session()

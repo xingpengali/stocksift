@@ -45,8 +45,8 @@ class Settings:
     
     def _get_default_config_path(self) -> str:
         """获取默认配置文件路径"""
-        # 获取项目根目录
-        project_root = Path(__file__).parent.parent
+        # 获取项目根目录（从 src/config/settings.py 向上两级是项目根目录）
+        project_root = Path(__file__).parent.parent.parent
         return str(project_root / "data" / "config.json")
     
     def _get_default_config(self) -> Dict[str, Any]:
@@ -216,7 +216,7 @@ class Settings:
         """确保必要的目录存在"""
         # 从配置文件路径推断项目根目录
         config_path = Path(self._config_path)
-        project_root = config_path.parent.parent
+        project_root = config_path.parent
         
         directories = [
             config_path.parent,  # data目录
