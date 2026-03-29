@@ -58,3 +58,7 @@ docs/
 
 # Qoder
 .qoder/
+
+# Build scripts
+StockSift.spec
+build_mac_app.sh
