@@ -1,0 +1,6 @@
+2026-03-21 22:37:49 - root - INFO - 日志系统初始化完成，日志文件: /Users/xingpeng/PyCharmMiscProject/stocksift/stocksift/data/logs/stocksift.log
+2026-03-21 22:37:56 - root - INFO - 日志系统初始化完成，日志文件: /Users/xingpeng/PyCharmMiscProject/stocksift/stocksift/data/logs/stocksift.log
+2026-03-21 22:37:56 - src.core.data_fetcher - INFO - 注册数据源适配器: akshare, 优先级: 10
+2026-03-21 22:37:56 - src.core.data_fetcher - INFO - 注册数据源适配器: tushare, 优先级: 20
+2026-03-21 22:37:56 - src.core.data_fetcher - INFO - 注册数据源适配器: baostock, 优先级: 30
+2026-03-21 22:37:56 - src.core.data_fetcher - INFO - 数据采集调度器初始化完成

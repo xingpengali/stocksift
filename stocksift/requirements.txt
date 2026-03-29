@@ -1,0 +1,31 @@
+# StockSift A股选股软件 依赖清单
+# Python 3.8 兼容
+
+# GUI 框架
+PyQt6
+
+# 数据源
+# akshare 需要 Python 3.9+，在 Python 3.8 中暂不使用
+tushare
+baostock
+
+# 数据处理
+pandas
+numpy
+
+# 图表可视化
+matplotlib
+pyqtgraph
+
+# 数据库
+sqlalchemy<2.0.0
+
+# 网络请求
+requests
+
+# 中文处理与情感分析
+jieba
+snownlp
+
+# Excel 导出
+openpyxl
