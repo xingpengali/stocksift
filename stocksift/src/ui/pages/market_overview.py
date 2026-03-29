@@ -17,7 +17,8 @@ from models.market_overview import (
     get_latest_market_indices, 
     get_latest_sectors, 
     get_latest_market_stats,
-    get_latest_capital_flow
+    get_latest_capital_flow,
+    get_last_update_time
 )
 
 logger = get_logger(__name__)
@@ -139,10 +140,21 @@ class MarketOverviewPage(BasePage):
         """)
         title_layout.addWidget(title)
         
+        # 最后更新时间
+        self._update_time_label = QLabel("更新于: --")
+        self._update_time_label.setStyleSheet("""
+            font-size: 12px;
+            color: #8c8c8c;
+            margin-left: 10px;
+        """)
+        title_layout.addWidget(self._update_time_label)
+        
+        title_layout.addStretch()
+        
         refresh_btn = QPushButton("🔄 刷新")
         refresh_btn.setFixedWidth(80)
         refresh_btn.clicked.connect(self.on_refresh)
-        title_layout.addWidget(refresh_btn, alignment=Qt.AlignmentFlag.AlignRight)
+        title_layout.addWidget(refresh_btn)
         
         content_layout.addWidget(title_widget)
         
@@ -248,11 +260,28 @@ class MarketOverviewPage(BasePage):
             self._update_stats_data_from_db()
             self._update_flow_data_from_db()
             
+            # 更新最后更新时间
+            self._update_last_update_time()
+            
         except Exception as e:
             logger.error(f"加载市场数据失败: {e}")
             self.show_error(f"数据加载失败: {e}")
         finally:
             self.show_loading(False)
+    
+    def _update_last_update_time(self):
+        """更新最后更新时间显示"""
+        try:
+            last_update = get_last_update_time()
+            if last_update:
+                # 格式化为本地时间字符串 (年月日 时分秒)
+                time_str = last_update.strftime("%Y-%m-%d %H:%M:%S")
+                self._update_time_label.setText(f"更新于: {time_str}")
+            else:
+                self._update_time_label.setText("更新于: --")
+        except Exception as e:
+            logger.error(f"更新最后更新时间失败: {e}")
+            self._update_time_label.setText("更新于: --")
     
     def _update_index_data_from_db(self):
         """从数据库更新指数数据"""

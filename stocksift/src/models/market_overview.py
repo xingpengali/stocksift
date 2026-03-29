@@ -293,3 +293,31 @@ def get_latest_capital_flow() -> Optional[Dict[str, Any]]:
     except Exception as e:
         logger.error(f"获取资金流向数据失败: {e}")
         return None
+
+
+def get_last_update_time() -> Optional[datetime]:
+    """
+    获取数据最后更新时间
+    
+    查询所有市场数据表，返回最新的更新时间
+    
+    Returns:
+        datetime: 最后更新时间，如果没有数据则返回None
+    """
+    try:
+        with session_scope() as session:
+            # 查询各表的最大更新时间
+            index_time = session.query(func.max(MarketIndex.updated_at)).scalar()
+            sector_time = session.query(func.max(Sector.updated_at)).scalar()
+            stats_time = session.query(func.max(MarketStats.updated_at)).scalar()
+            flow_time = session.query(func.max(CapitalFlow.updated_at)).scalar()
+            
+            # 取最新的时间
+            times = [t for t in [index_time, sector_time, stats_time, flow_time] if t is not None]
+            
+            if times:
+                return max(times)
+            return None
+    except Exception as e:
+        logger.error(f"获取最后更新时间失败: {e}")
+        return None
